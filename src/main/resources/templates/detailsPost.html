@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Détails du Post</title>
+</head>
+<body>
+<h2>Détails du Post</h2>
+<p><strong>ID :</strong> <span th:text="${post.postid}"></span></p>
+<p><strong>Nom :</strong> <span th:text="${post.nom}"></span></p>
+<p><strong>Template ID :</strong> <span th:text="${template.id}"></span></p>
+
+<h3>Fichier actuel :</h3>
+<a th:href="@{'/template/download/' + ${template.id}}">Télécharger le fichier</a>
+
+<h3>Changer le fichier :</h3>
+<form th:action="@{'/template/update/' + ${template.id}}" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" required>
+    <button type="submit">Mettre à jour</button>
+</form>
+
+<br><a href="/post">← Retour</a>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des postes</title>
+</head>
+<body>
+<h2>Liste des Postes</h2>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Template ID</th>
+    </tr>
+    <tr th:each="post : ${post}">
+        <td th:text="${post.postid}"></td>
+        <td th:text="${post.nom}"></td>
+        <td th:text="${post.templateid}"></td>
+        <td>
+            <a th:href="@{'/post/' + ${post.postid}}">Voir Template</a>
+        </td>
+    </tr>
+
+</table>
+</body>
+</html>

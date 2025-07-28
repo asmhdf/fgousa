@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Soumissions opérateurs</title>
+</head>
+<body>
+
+<h1>Checklist envoyées par les opérateurs</h1>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Poste</th>
+        <th>Matricule opérateur</th>
+        <th>Date de soumission</th>
+        <th>Télécharger</th>
+    </tr>
+    <tr th:each="entry : ${submissions}">
+        <td th:text="${entry.postName}">Post</td>
+        <td th:text="${entry.matricule}">Matricule</td>
+        <td th:text="${#strings.replace(entry.dateop.toString(), 'T', ' ')}"></td>
+
+
+        <td><a th:href="@{'/teamleader/download/' + ${entry.setupId}}">📥 Télécharger</a></td>
+    </tr>
+</table>
+
+</body>
+</html>
