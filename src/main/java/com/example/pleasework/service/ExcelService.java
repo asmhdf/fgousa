@@ -7,44 +7,52 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class ExcelService {
 
-    public byte[] lockFilledCells(byte[] excelBytes) throws IOException {
+    public byte[] lockNewlyFilledCells(byte[] excelBytes) throws IOException {
         InputStream is = new ByteArrayInputStream(excelBytes);
         Workbook workbook;
 
-        // ➤ Détection du format XLS vs XLSX
         if (isXLS(excelBytes)) {
             workbook = new HSSFWorkbook(new POIFSFileSystem(is));
         } else {
             workbook = new XSSFWorkbook(is);
         }
 
+        Map<CellStyle, CellStyle> lockedStyleCache = new HashMap<>();
+
         for (Sheet sheet : workbook) {
             for (Row row : sheet) {
                 for (Cell cell : row) {
                     if (cell == null) continue;
 
-                    CellStyle originalStyle = cell.getCellStyle();
-                    CellStyle newStyle = workbook.createCellStyle();
+                    boolean isEmpty = cell.getCellType() == CellType.BLANK
+                            || (cell.getCellType() == CellType.STRING && cell.getStringCellValue().trim().isEmpty());
 
-                    if (originalStyle != null) {
-                        newStyle.cloneStyleFrom(originalStyle);
+                    // Vérifie si la cellule est déjà lockée
+                    if (!isEmpty && !cell.getCellStyle().getLocked()) {
+                        // 🔐 Elle est remplie et pas encore lockée : on la modifie
+
+                        CellStyle original = cell.getCellStyle();
+                        CellStyle lockedStyle = lockedStyleCache.get(original);
+
+                        if (lockedStyle == null) {
+                            lockedStyle = workbook.createCellStyle();
+                            lockedStyle.cloneStyleFrom(original);
+                            lockedStyle.setLocked(true);
+                            lockedStyleCache.put(original, lockedStyle);
+                        }
+
+                        cell.setCellStyle(lockedStyle);
                     }
-
-                    if (isNotEmpty(cell)) {
-                        newStyle.setLocked(true);  // ➤ Verrouille les cellules pleines
-                    } else {
-                        newStyle.setLocked(false); // ➤ Déverrouille les cellules vides
-                    }
-
-                    cell.setCellStyle(newStyle);
+                    // ❌ NE PAS modifier les autres styles (vides ou déjà lockées)
                 }
             }
 
-            // ➤ Protège uniquement les cellules marquées Locked
             sheet.protectSheet("readonly");
         }
 

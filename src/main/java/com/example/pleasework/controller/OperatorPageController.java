@@ -80,7 +80,8 @@ public class OperatorPageController {
     @GetMapping("/download/{templateId}")
     public ResponseEntity<byte[]> downloadTemplate(@PathVariable Integer templateId) throws IOException {
         Template template = templateRepository.findById(templateId).orElseThrow();
-        byte[] lockedExcel = excelService.lockFilledCells(template.getFile());
+        byte[] lockedExcel = excelService.lockNewlyFilledCells(template.getFile());
+
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + template.getFilename() + "\"")
