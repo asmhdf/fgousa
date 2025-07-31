@@ -2,15 +2,644 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Connexion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Espace Personnel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #faf5ff 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated blob background */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            mix-blend-mode: multiply;
+            animation: blob 7s infinite;
+        }
+
+        .blob-1 {
+            top: -10rem;
+            right: -10rem;
+            width: 20rem;
+            height: 20rem;
+            background: #a855f7;
+            opacity: 0.7;
+            animation-delay: 0s;
+        }
+
+        .blob-2 {
+            bottom: -10rem;
+            left: -10rem;
+            width: 20rem;
+            height: 20rem;
+            background: #3b82f6;
+            opacity: 0.7;
+            animation-delay: 2s;
+        }
+
+        .blob-3 {
+            top: 10rem;
+            left: 10rem;
+            width: 20rem;
+            height: 20rem;
+            background: #ec4899;
+            opacity: 0.7;
+            animation-delay: 4s;
+        }
+
+        @keyframes blob {
+            0% {
+                transform: translate(0px, 0px) scale(1);
+            }
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+            100% {
+                transform: translate(0px, 0px) scale(1);
+            }
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 28rem;
+        }
+
+        /* Header section */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 4rem;
+            height: 4rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo svg {
+            width: 2rem;
+            height: 2rem;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        /* Card */
+        .card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.35);
+        }
+
+        .card-header {
+            padding: 1.5rem 1.5rem 0;
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-description {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 0;
+        }
+
+        .card-content {
+            padding: 0.75rem 1.5rem 1.5rem; /* Ajout d'un petit padding-top de 0.75rem */
+        }
+
+        /* Form styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group:first-child {
+            margin-top: 0;
+        }
+
+        .label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .input {
+            width: 100%;
+            height: 3rem;
+            padding: 0 1rem 0 2.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .input.valid {
+            border-color: #10b981;
+        }
+
+        .input.invalid {
+            border-color: #ef4444;
+        }
+
+        .input.error {
+            border-color: #ef4444;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .validation-dot {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .validation-dot.show {
+            opacity: 1;
+        }
+
+        .validation-dot.valid {
+            background: #10b981;
+        }
+
+        .validation-dot.invalid {
+            background: #ef4444;
+        }
+
+        /* Error message under input */
+        .error-message {
+            color: #ef4444;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-5px);
+            transition: all 0.3s ease;
+        }
+
+        .error-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Button */
+        .button {
+            width: 100%;
+            height: 3rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.3);
+        }
+
+        .button:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px 0 rgba(59, 130, 246, 0.4);
+        }
+
+        .button:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .button-text {
+            transition: opacity 0.3s ease;
+        }
+
+        .button.loading .button-text {
+            opacity: 0;
+        }
+
+        .loading-spinner {
+            position: absolute;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .button.loading .loading-spinner {
+            opacity: 1;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .arrow-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            transition: transform 0.2s ease;
+        }
+
+        .button:hover .arrow-icon {
+            transform: translateX(2px);
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .toast.success {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+            color: #16a34a;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .footer a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .footer a:hover {
+            color: #1d4ed8;
+        }
+
+        .copyright {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container {
+                max-width: 100%;
+            }
+
+            .card {
+                margin: 0 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .toast {
+                top: 1rem;
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+            }
+        }
+    </style>
 </head>
 <body>
-<h2>Connexion</h2>
-<form action="/auth/login" method="POST">
-    <label for="matricule">Matricule :</label>
-    <input type="number" id="matricule" name="matricule" required>
-    <br><br>
-    <button type="submit">Se connecter</button>
-</form>
+<!-- Animated background blobs -->
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4"/>
+                <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+                <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+                <path d="M12 3c0 1-1 3-3 3s-3-2-3-3 1-3 3-3 3 2 3 3"/>
+                <path d="M12 21c0-1-1-3-3-3s-3 2-3 3 1 3 3 3 3-2 3-3"/>
+            </svg>
+        </div>
+        <h1>Connexion</h1>
+        <p>Accédez à votre espace personnel</p>
+    </div>
+
+    <!-- Login Card -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Bienvenue</h2>
+            <p class="card-description">Saisissez votre matricule pour vous connecter</p>
+        </div>
+
+        <div class="card-content">
+            <!-- Form - Compatible avec Spring Boot -->
+            <form id="loginForm" action="/auth/login" method="POST">
+                <div class="form-group">
+                    <label for="matricule" class="label">Matricule</label>
+                    <div class="input-container">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <input
+                                type="number"
+                                id="matricule"
+                                name="matricule"
+                                class="input"
+                                placeholder="Entrez votre matricule"
+                                required
+                                autocomplete="username"
+                        >
+                        <div id="validationDot" class="validation-dot"></div>
+                    </div>
+                    <div id="errorMessage" class="error-message"></div>
+                </div>
+
+                <button type="submit" id="submitButton" class="button">
+                    <span class="button-text">Se connecter</span>
+                    <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14"/>
+                        <path d="M12 5l7 7-7 7"/>
+                    </svg>
+                    <div class="loading-spinner"></div>
+                </button>
+            </form>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>
+                    Besoin d'aide ?
+                    <a href="#" id="helpLink">Contactez le support</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="copyright">
+        <p>© 2024 - Tous droits réservés</p>
+    </div>
+</div>
+
+<script>
+    // DOM Elements
+    const form = document.getElementById('loginForm');
+    const matriculeInput = document.getElementById('matricule');
+    const submitButton = document.getElementById('submitButton');
+    const validationDot = document.getElementById('validationDot');
+    const errorMessage = document.getElementById('errorMessage');
+    const helpLink = document.getElementById('helpLink');
+
+    // Create toast notification
+    function showToast(message, isError = true) {
+        // Remove existing toast
+        const existingToast = document.querySelector('.toast');
+        if (existingToast) {
+            existingToast.remove();
+        }
+
+        // Create new toast
+        const toast = document.createElement('div');
+        toast.className = `toast ${isError ? '' : 'success'}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        // Show toast
+        setTimeout(() => toast.classList.add('show'), 100);
+
+        // Hide toast after 4 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
+    // Show error message under input
+    function showInputError(message) {
+        errorMessage.textContent = message;
+        errorMessage.classList.add('show');
+        matriculeInput.classList.add('error');
+
+        // Remove error after 3 seconds
+        setTimeout(() => {
+            errorMessage.classList.remove('show');
+            matriculeInput.classList.remove('error');
+        }, 3000);
+    }
+
+    // Hide error message
+    function hideInputError() {
+        errorMessage.classList.remove('show');
+        matriculeInput.classList.remove('error');
+    }
+
+    // Check for error parameter in URL (from Spring Boot redirect)
+    function checkForErrors() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('error') === 'true') {
+            showToast('Matricule incorrect. Veuillez réessayer.');
+            // Clean URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }
+
+    // Validation function
+    function validateMatricule(value) {
+        return /^\d+$/.test(value) && value.length >= 4;
+    }
+
+    // Input validation
+    matriculeInput.addEventListener('input', function(e) {
+        const value = e.target.value;
+        hideInputError();
+
+        if (value) {
+            const isValid = validateMatricule(value);
+
+            // Update input styling
+            matriculeInput.classList.remove('valid', 'invalid');
+            matriculeInput.classList.add(isValid ? 'valid' : 'invalid');
+
+            // Update validation dot
+            validationDot.classList.remove('valid', 'invalid');
+            validationDot.classList.add(isValid ? 'valid' : 'invalid', 'show');
+
+            // Enable/disable submit button
+            submitButton.disabled = !isValid;
+        } else {
+            // Reset styling
+            matriculeInput.classList.remove('valid', 'invalid');
+            validationDot.classList.remove('show', 'valid', 'invalid');
+            submitButton.disabled = true;
+        }
+    });
+
+    // Form submission with loading state
+    form.addEventListener('submit', function(e) {
+        const matricule = matriculeInput.value.trim();
+
+        // Validate before submission
+        if (!validateMatricule(matricule)) {
+            e.preventDefault();
+            showInputError('Matricule invalide (minimum 4 chiffres)');
+            return;
+        }
+
+        // Show loading state
+        submitButton.classList.add('loading');
+        submitButton.disabled = true;
+        hideInputError();
+
+        // Let the form submit naturally to Spring Boot
+    });
+
+    // Help link
+    helpLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        showToast('Un email de support vous sera envoyé sous peu.', false);
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check for error messages from Spring Boot
+        checkForErrors();
+
+        // Focus input after load
+        setTimeout(() => {
+            matriculeInput.focus();
+        }, 500);
+
+        // Disable submit button initially
+        submitButton.disabled = true;
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            matriculeInput.value = '';
+            matriculeInput.classList.remove('valid', 'invalid', 'error');
+            validationDot.classList.remove('show', 'valid', 'invalid');
+            hideInputError();
+            submitButton.disabled = true;
+        }
+    });
+</script>
 </body>
 </html>
