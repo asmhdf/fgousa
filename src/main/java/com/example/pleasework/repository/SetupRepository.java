@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface SetupRepository extends JpaRepository<Setup, Integer> {
     List<Setup> findByIdopNotNull();
+    List<Setup> findByIdtlNotNull();
+
 
 }
 

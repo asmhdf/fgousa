@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Fichiers reçus (Qualité)</title>
+</head>
+<body>
+
+<h1>Checklists reçues des TeamLeaders</h1>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Poste</th>
+        <th>Matricule TeamLeader</th>
+        <th>Date de réception</th>
+        <th>Téléchargement</th>
+    </tr>
+    <tr th:each="entry : ${submissions}">
+        <td th:text="${entry.postName}">Nom du poste</td>
+        <td th:text="${entry.matricule}">Matricule</td>
+        <td th:text="${#strings.replace(entry.datetl.toString(), 'T', ' ')}">Date</td>
+        <td><a th:href="@{'/qualite/download/' + ${entry.setupId}}">📥 Télécharger</a></td>
+    </tr>
+</table>
+<h2>Importer un fichier Excel</h2>
+
+<form th:action="@{/qualite/upload}" method="post" enctype="multipart/form-data">
+    <label for="postId">Poste :</label>
+    <select name="postId" id="postId" required>
+        <option th:each="post : ${posts}"
+                th:value="${post.postid}"
+                th:text="${post.nom}">Nom du poste</option>
+    </select>
+    <br><br>
+
+    <label for="file">Fichier Excel :</label>
+    <input type="file" name="file" id="file" accept=".xls,.xlsx" required />
+    <br><br>
+
+    <button type="submit">📤 Importer</button>
+</form>
+
+</body>
+</html>

@@ -28,14 +28,14 @@ public class AuthController {
 
             // 🟡 Stocke le matricule dans la session
             session.setAttribute("matricule", matricule);
-
+            session.setAttribute("userid", user.getUserid());
             switch (role) {
                 case "admin":
                     return "redirect:/post";
                 case "teamleader":
                     return "redirect:/teamleader";
                 case "respo qualité":
-                    return "redirect:/qualité";
+                    return "redirect:/qualite";
                 case "operateur":
                     return "redirect:/operator";
                 default:
