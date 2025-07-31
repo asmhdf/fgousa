@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Archives du Post</title>
+</head>
+<body>
+
+<h2 th:text="'Archives pour le poste : ' + ${post.nom}"></h2>
+
+<table border="1">
+    <tr>
+        <th>Date Opérateur</th>
+        <th>Date TeamLeader</th>
+        <th>Date Qualité</th>
+        <th>ID Opérateur</th>
+        <th>ID TeamLeader</th>
+        <th>ID Qualité</th>
+        <th>Téléchargement</th>
+    </tr>
+    <tr th:each="entry : ${archives}">
+        <td th:text="${entry.dateop}">-</td>
+        <td th:text="${entry.datetl}">-</td>
+        <td th:text="${entry.dateq}">-</td>
+        <td th:text="${entry.idop}">-</td>
+        <td th:text="${entry.idtl}">-</td>
+        <td th:text="${entry.idq}">-</td>
+        <td>
+            <a th:href="@{'/post/archive/download/' + ${entry.setupid}}">📥 Télécharger</a>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

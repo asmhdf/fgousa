@@ -11,16 +11,20 @@
         <th>ID</th>
         <th>Nom</th>
         <th>Template ID</th>
+        <th>Voir</th>
+        <th>Archive</th>
     </tr>
     <tr th:each="post : ${post}">
-        <td th:text="${post.postid}"></td>
-        <td th:text="${post.nom}"></td>
-        <td th:text="${post.templateid}"></td>
+        <td th:text="${post.postid}">ID</td>
+        <td th:text="${post.nom}">Nom</td>
+        <td th:text="${post.templateid}">Template ID</td>
         <td>
             <a th:href="@{'/post/' + ${post.postid}}">Voir Template</a>
         </td>
+        <td>
+            <a th:href="@{'/post/' + ${post.postid} + '/archive'}">Archive</a> <!-- ✅ Corrigé ici -->
+        </td>
     </tr>
-
 </table>
 </body>
 </html>

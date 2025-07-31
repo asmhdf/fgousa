@@ -1,14 +1,22 @@
 package com.example.pleasework.controller;
 
 import com.example.pleasework.entity.Post;
+import com.example.pleasework.entity.Setup;
 import com.example.pleasework.entity.Template;
 import com.example.pleasework.repository.PostRepository;
+import com.example.pleasework.repository.SetupRepository;
 import com.example.pleasework.repository.TemplateRepository;
+import com.example.pleasework.service.ExcelService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -43,4 +51,36 @@ public class PostController {
         model.addAttribute("template", template);
         return "detailsPost";
     }
+    @Autowired
+    private SetupRepository setupRepository;
+    @GetMapping("/post/{id}/archive")
+    public String viewPostArchive(@PathVariable Integer id, Model model) {
+        Post post = postRepository.findById(id).orElse(null);
+        if (post == null) {
+            return "redirect:/post";
+        }
+
+        List<Setup> archives = setupRepository.findByPostid(id);
+        model.addAttribute("post", post);
+        model.addAttribute("archives", archives);
+
+        return "post-archives";
+    }
+
+    @Autowired
+    private ExcelService excelService;
+
+    @GetMapping("/post/archive/download/{setupId}")
+    public ResponseEntity<byte[]> downloadArchive(@PathVariable Integer setupId) throws IOException {
+        Setup setup = setupRepository.findById(setupId).orElseThrow();
+        byte[] fileData = excelService.lockNewlyFilledCells(setup.getFile());
+
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"archive.xls\"")
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .body(fileData);
+    }
+
+
 }
