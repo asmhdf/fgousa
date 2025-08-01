@@ -1,5 +1,7 @@
 package com.example.pleasework.controller;
 
+import org.springframework.ui.Model;
+
 import com.example.pleasework.entity.User;
 import com.example.pleasework.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
@@ -45,5 +47,12 @@ public class AuthController {
             return "redirect:/login?error=true";
         }
     }
+    @PostMapping("/logout")
+    public String logout(HttpSession session) {
+        // Invalider la session
+        session.invalidate();
 
+        // Rediriger vers la page de connexion HTML avec un message de succès
+        return "redirect:/login.html?logout=true";
+    }
 }

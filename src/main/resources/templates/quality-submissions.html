@@ -1,44 +1,906 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Fichiers reçus (Qualité)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fichiers Reçus - Espace Qualité</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #faf5ff 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated blob background */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            mix-blend-mode: multiply;
+            animation: blob 7s infinite;
+        }
+
+        .blob-1 {
+            top: -10rem;
+            right: -10rem;
+            width: 20rem;
+            height: 20rem;
+            background: #a855f7;
+            opacity: 0.7;
+            animation-delay: 0s;
+        }
+
+        .blob-2 {
+            bottom: -10rem;
+            left: -10rem;
+            width: 20rem;
+            height: 20rem;
+            background: #3b82f6;
+            opacity: 0.7;
+            animation-delay: 2s;
+        }
+
+        .blob-3 {
+            top: 10rem;
+            left: 10rem;
+            width: 20rem;
+            height: 20rem;
+            background: #ec4899;
+            opacity: 0.7;
+            animation-delay: 4s;
+        }
+
+        @keyframes blob {
+            0% {
+                transform: translate(0px, 0px) scale(1);
+            }
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+            100% {
+                transform: translate(0px, 0px) scale(1);
+            }
+        }
+
+        /* Top navigation */
+        .top-nav {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 2rem;
+            max-width: 80rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 50%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-logo svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: white;
+        }
+
+        .nav-title {
+            font-weight: 700;
+            color: #111827;
+            font-size: 1.125rem;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .disconnect-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px 0 rgba(239, 68, 68, 0.3);
+        }
+
+        .disconnect-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px 0 rgba(239, 68, 68, 0.4);
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 80rem;
+            margin: 0 auto;
+        }
+
+        /* Header section */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 4rem;
+            height: 4rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo svg {
+            width: 2rem;
+            height: 2rem;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        /* Card */
+        .card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .card:hover {
+            box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.35);
+        }
+
+        .card-header {
+            padding: 1.5rem 1.5rem 0;
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .card-title svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: #10b981;
+        }
+
+        .card-description {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 0;
+        }
+
+        .card-content {
+            padding: 0.75rem 1.5rem 1.5rem;
+        }
+
+        /* Success/Error messages */
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .message-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .message-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6b7280;
+        }
+
+        .empty-state svg {
+            width: 4rem;
+            height: 4rem;
+            margin-bottom: 1rem;
+            color: #d1d5db;
+        }
+
+        .empty-state h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        /* Submissions table */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(16, 185, 129, 0.1);
+        }
+
+        .submissions-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .submissions-table th {
+            background: rgba(16, 185, 129, 0.05);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+            border-bottom: 2px solid rgba(16, 185, 129, 0.1);
+        }
+
+        .submissions-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.05);
+            font-size: 0.875rem;
+            color: #4b5563;
+            vertical-align: middle;
+        }
+
+        .submissions-table tr:hover {
+            background: rgba(16, 185, 129, 0.02);
+        }
+
+        .submissions-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Column widths */
+        .submissions-table th:nth-child(1),
+        .submissions-table td:nth-child(1) { width: 30%; } /* Poste */
+
+        .submissions-table th:nth-child(2),
+        .submissions-table td:nth-child(2) { width: 20%; } /* Matricule */
+
+        .submissions-table th:nth-child(3),
+        .submissions-table td:nth-child(3) { width: 30%; } /* Date */
+
+        .submissions-table th:nth-child(4),
+        .submissions-table td:nth-child(4) { width: 20%; text-align: center; } /* Télécharger */
+
+        /* Buttons */
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .button-primary {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.3);
+        }
+
+        .button-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px 0 rgba(59, 130, 246, 0.4);
+        }
+
+        .button-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.3);
+        }
+
+        .button-success:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px 0 rgba(16, 185, 129, 0.4);
+        }
+
+        .button:active {
+            transform: scale(0.98);
+        }
+
+        .button svg {
+            width: 1rem;
+            height: 1rem;
+            transition: transform 0.2s ease;
+        }
+
+        .button:hover svg {
+            transform: translateX(2px);
+        }
+
+        /* Upload form */
+        .upload-form {
+            background: rgba(16, 185, 129, 0.05);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 2px dashed rgba(16, 185, 129, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .upload-form:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .select-input,
+        .file-input {
+            width: 100%;
+            height: 3rem;
+            padding: 0 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .select-input:focus,
+        .file-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .select-input {
+            cursor: pointer;
+        }
+
+        /* Logout confirmation modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-header svg {
+            width: 2rem;
+            height: 2rem;
+            color: #ef4444;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .modal-content {
+            color: #6b7280;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .modal-btn-cancel {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #e5e7eb;
+        }
+
+        .modal-btn-confirm {
+            background: #ef4444;
+            color: white;
+        }
+
+        .modal-btn-confirm:hover {
+            background: #dc2626;
+        }
+
+        /* Copyright */
+        .copyright {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .top-nav {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .card-content {
+                padding: 0.75rem 1rem 1rem;
+            }
+
+            .submissions-table th,
+            .submissions-table td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .button {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
 </head>
 <body>
+<!-- Animated background blobs -->
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
 
-<h1>Checklists reçues des TeamLeaders</h1>
+<!-- Top Navigation -->
+<div class="top-nav">
+    <div class="nav-left">
+        <div class="nav-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4"/>
+                <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+                <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+                <path d="M12 3c0 1-1 3-3 3s-3-2-3-3 1-3 3-3 3 2 3 3"/>
+                <path d="M12 21c0-1-1-3-3-3s-3 2-3 3 1 3 3 3 3-2 3-3"/>
+            </svg>
+        </div>
+        <span class="nav-title">Espace Qualité</span>
+    </div>
+    <div class="nav-right">
+        <span class="user-info">Utilisateur: <span th:text="${session.userid ?: 'Q001'}">Q001</span></span>
+        <button class="disconnect-btn" onclick="showLogoutModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16,17 21,12 16,7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Déconnexion
+        </button>
+    </div>
+</div>
 
-<table border="1" cellpadding="10">
-    <tr>
-        <th>Poste</th>
-        <th>Matricule TeamLeader</th>
-        <th>Date de réception</th>
-        <th>Téléchargement</th>
-    </tr>
-    <tr th:each="entry : ${submissions}">
-        <td th:text="${entry.postName}">Nom du poste</td>
-        <td th:text="${entry.matricule}">Matricule</td>
-        <td th:text="${#strings.replace(entry.datetl.toString(), 'T', ' ')}">Date</td>
-        <td><a th:href="@{'/qualite/download/' + ${entry.setupId}}">📥 Télécharger</a></td>
-    </tr>
-</table>
-<h2>Importer un fichier Excel</h2>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 12l2 2 4-4"/>
+                <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+                <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+                <path d="M12 3c0 1-1 3-3 3s-3-2-3-3 1-3 3-3 3 2 3 3"/>
+                <path d="M12 21c0-1-1-3-3-3s-3 2-3 3 1 3 3 3 3-2 3-3"/>
+            </svg>
+        </div>
+        <h1>Checklists des Team Leaders</h1>
+        <p>Consultez les fichiers reçus et importez vos validations qualité</p>
+    </div>
 
-<form th:action="@{/qualite/upload}" method="post" enctype="multipart/form-data">
-    <label for="postId">Poste :</label>
-    <select name="postId" id="postId" required>
-        <option th:each="post : ${posts}"
-                th:value="${post.postid}"
-                th:text="${post.nom}">Nom du poste</option>
-    </select>
-    <br><br>
+    <!-- Success/Error Messages -->
+    <div th:if="${param.success}" class="message message-success">
+        ✅ Fichier importé avec succès ! Votre validation qualité a été enregistrée.
+    </div>
 
-    <label for="file">Fichier Excel :</label>
-    <input type="file" name="file" id="file" accept=".xls,.xlsx" required />
-    <br><br>
+    <div th:if="${param.error == 'noFile'}" class="message message-error">
+        ❌ Erreur : Aucun fichier sélectionné. Veuillez choisir un fichier à importer.
+    </div>
 
-    <button type="submit">📤 Importer</button>
-</form>
+    <div th:if="${param.error == 'sessionExpired'}" class="message message-error">
+        ❌ Erreur : Session expirée. Veuillez vous reconnecter.
+    </div>
 
+    <!-- Received Files Card -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10,9 9,9 8,9"/>
+                </svg>
+                Fichiers Reçus des Team Leaders
+            </h2>
+            <p class="card-description">Téléchargez les checklists validées par les team leaders</p>
+        </div>
+        <div class="card-content">
+            <!-- Check if submissions exist -->
+            <div th:if="${#lists.isEmpty(submissions)}" class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                </svg>
+                <h3>Aucun fichier reçu</h3>
+                <p>Les checklists validées par les team leaders apparaîtront ici.</p>
+            </div>
+
+            <!-- Submissions Table -->
+            <div th:unless="${#lists.isEmpty(submissions)}" class="table-wrapper">
+                <table class="submissions-table">
+                    <thead>
+                    <tr>
+                        <th>Poste</th>
+                        <th>Matricule Team Leader</th>
+                        <th>Date de réception</th>
+                        <th>Téléchargement</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="entry : ${submissions}">
+                        <td>
+                            <div style="font-weight: 600; color: #1f2937;" th:text="${entry.postName}">Nom du poste</div>
+                        </td>
+                        <td>
+                            <span style="font-family: monospace; background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem;" th:text="${entry.matricule}">TL001</span>
+                        </td>
+                        <td>
+                            <span th:text="${#temporals.format(entry.datetl, 'dd/MM/yyyy HH:mm')}">01/01/2024 14:30</span>
+                        </td>
+                        <td>
+                            <a th:href="@{'/qualite/download/' + ${entry.setupId}}" class="button button-primary">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7,10 12,15 17,10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                Télécharger
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Card -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17,8 12,3 7,8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                Importer une Validation Qualité
+            </h2>
+            <p class="card-description">Envoyez votre fichier Excel de validation pour un poste spécifique</p>
+        </div>
+        <div class="card-content">
+            <form class="upload-form" th:action="@{/qualite/upload}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="postId" class="label">Sélectionner le poste concerné</label>
+                    <select name="postId" id="postId" class="select-input" required>
+                        <option value="">-- Choisir un poste --</option>
+                        <option th:each="post : ${posts}"
+                                th:value="${post.postid}"
+                                th:text="${post.nom}">Nom du poste</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="file" class="label">Fichier Excel de validation</label>
+                    <input type="file" name="file" id="file" class="file-input" accept=".xls,.xlsx" required>
+                </div>
+
+                <button type="submit" class="button button-success">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17,8 12,3 7,8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    Importer la validation
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="copyright">
+        <p>© 2024 - Tous droits réservés</p>
+    </div>
+</div>
+
+<!-- Logout Confirmation Modal -->
+<div class="modal-overlay" id="logoutModal">
+    <div class="modal">
+        <div class="modal-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                <polyline points="16,17 21,12 16,7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            <h3 class="modal-title">Confirmer la déconnexion</h3>
+        </div>
+        <div class="modal-content">
+            Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à nouveau à votre espace qualité.
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn modal-btn-cancel" onclick="hideLogoutModal()">Annuler</button>
+            <button class="modal-btn modal-btn-confirm" onclick="confirmLogout()">Se déconnecter</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Logout modal functions
+    function showLogoutModal() {
+        document.getElementById('logoutModal').classList.add('show');
+    }
+
+    function hideLogoutModal() {
+        document.getElementById('logoutModal').classList.remove('show');
+    }
+
+    function confirmLogout() {
+        // Show loading state
+        const confirmBtn = document.querySelector('.modal-btn-confirm');
+        confirmBtn.textContent = 'Déconnexion...';
+        confirmBtn.disabled = true;
+
+        // Faire la requête de déconnexion puis rediriger manuellement
+        fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        }).then(() => {
+            // Rediriger vers la page de login après la déconnexion
+            window.location.href = '/login.html?logout=true';
+        }).catch(() => {
+            // En cas d'erreur, rediriger quand même
+            window.location.href = '/login.html?logout=true';
+        });
+    }
+
+    // Close modal on overlay click
+    document.getElementById('logoutModal').addEventListener('click', function (e) {
+        if (e.target === this) {
+            hideLogoutModal();
+        }
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            hideLogoutModal();
+        }
+    });
+
+    // Auto-hide success message after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        const successMessage = document.querySelector('.message-success');
+        if (successMessage) {
+            setTimeout(() => {
+                successMessage.style.opacity = '0';
+                setTimeout(() => successMessage.remove(), 300);
+            }, 5000);
+        }
+
+        // Auto-hide error message after 8 seconds
+        const errorMessage = document.querySelector('.message-error');
+        if (errorMessage) {
+            setTimeout(() => {
+                errorMessage.style.opacity = '0';
+                setTimeout(() => errorMessage.remove(), 300);
+            }, 8000);
+        }
+    });
+
+    // File input validation
+    const fileInput = document.getElementById('file');
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const fileName = file.name;
+                const fileSize = (file.size / 1024 / 1024).toFixed(2); // MB
+
+                // Validate file type
+                const validTypes = ['.xls', '.xlsx'];
+                const fileExtension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+
+                if (!validTypes.includes(fileExtension)) {
+                    alert('Veuillez sélectionner un fichier Excel (.xls ou .xlsx)');
+                    this.value = '';
+                    return;
+                }
+
+                // Validate file size (max 10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('Le fichier est trop volumineux. Taille maximum : 10MB');
+                    this.value = '';
+                    return;
+                }
+
+                console.log(`Fichier sélectionné: ${fileName} (${fileSize} MB)`);
+            }
+        });
+    }
+
+    // Form validation
+    const uploadForm = document.querySelector('.upload-form');
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', function(e) {
+            const postSelect = document.getElementById('postId');
+            const fileInput = document.getElementById('file');
+
+            if (!postSelect.value) {
+                e.preventDefault();
+                alert('Veuillez sélectionner un poste.');
+                postSelect.focus();
+                return;
+            }
+
+            if (!fileInput.files.length) {
+                e.preventDefault();
+                alert('Veuillez sélectionner un fichier.');
+                fileInput.focus();
+                return;
+            }
+        });
+    }
+</script>
 </body>
 </html>

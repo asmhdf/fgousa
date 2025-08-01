@@ -1,53 +1,509 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Set Up Approval - Télécharger</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poste de Travail - Espace Opérateur</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #faf5ff 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated blob background */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            mix-blend-mode: multiply;
+            animation: blob 7s infinite;
+        }
+
+        .blob-1 {
+            top: -10rem;
+            right: -10rem;
+            width: 20rem;
+            height: 20rem;
+            background: #a855f7;
+            opacity: 0.7;
+            animation-delay: 0s;
+        }
+
+        .blob-2 {
+            bottom: -10rem;
+            left: -10rem;
+            width: 20rem;
+            height: 20rem;
+            background: #3b82f6;
+            opacity: 0.7;
+            animation-delay: 2s;
+        }
+
+        .blob-3 {
+            top: 10rem;
+            left: 10rem;
+            width: 20rem;
+            height: 20rem;
+            background: #ec4899;
+            opacity: 0.7;
+            animation-delay: 4s;
+        }
+
+        @keyframes blob {
+            0% {
+                transform: translate(0px, 0px) scale(1);
+            }
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+            100% {
+                transform: translate(0px, 0px) scale(1);
+            }
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 48rem;
+            margin: 0 auto;
+        }
+
+        /* Header section */
+        .header {
             text-align: center;
-            padding: 50px;
+            margin-bottom: 2rem;
         }
 
-        .button {
-            background-color: #28a745;
-            border: none;
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 4rem;
+            height: 4rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo svg {
+            width: 2rem;
+            height: 2rem;
             color: white;
-            padding: 15px 30px;
-            font-size: 16px;
-            text-decoration: none;
-            border-radius: 4px;
         }
 
-        .button:hover {
-            background-color: #218838;
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.5rem;
         }
 
-        .back {
-            margin-top: 30px;
-            display: inline-block;
+        .header p {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        /* Card */
+        .card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .card:hover {
+            box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.35);
+        }
+
+        .card-header {
+            padding: 1.5rem 1.5rem 0;
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .card-title svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: #3b82f6;
+        }
+
+        .card-description {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 0;
+        }
+
+        .card-content {
+            padding: 0.75rem 1.5rem 1.5rem;
+        }
+
+        /* Buttons */
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
             text-decoration: none;
-            color: #007bff;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .button-primary {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.3);
+        }
+
+        .button-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px 0 rgba(59, 130, 246, 0.4);
+        }
+
+        .button-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.3);
+        }
+
+        .button-success:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px 0 rgba(16, 185, 129, 0.4);
+        }
+
+        .button:active {
+            transform: scale(0.98);
+        }
+
+        .button svg {
+            width: 1rem;
+            height: 1rem;
+            transition: transform 0.2s ease;
+        }
+
+        .button:hover svg {
+            transform: translateX(2px);
+        }
+
+        /* Form styles */
+        .upload-form {
+            background: rgba(16, 185, 129, 0.05);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 2px dashed rgba(16, 185, 129, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .upload-form:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .file-input {
+            width: 100%;
+            height: 3rem;
+            padding: 0 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .file-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        /* Back link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #6b7280;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 0.5rem;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.8);
+            color: #374151;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-link svg {
+            width: 1rem;
+            height: 1rem;
+            transition: transform 0.2s ease;
+        }
+
+        .back-link:hover svg {
+            transform: translateX(-2px);
+        }
+
+        /* Success/Error messages */
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .message-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .message-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        /* Copyright */
+        .copyright {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .card-content {
+                padding: 0.75rem 1rem 1rem;
+            }
         }
     </style>
 </head>
 <body>
+<!-- Animated background blobs -->
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
 
-<h1 th:text="'Poste: ' + ${post.nom}">Nom du poste</h1>
-<p>Vous pouvez télécharger la checklist verrouillée associée à ce poste :</p>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+            </svg>
+        </div>
+        <h1 th:text="'Poste : ' + ${post.nom}">Poste de Travail</h1>
+        <p>Téléchargez votre checklist et importez votre fichier complété</p>
+    </div>
 
-<a th:href="@{'/operator/download/' + ${post.templateid}}" class="button">📥 Télécharger le fichier Excel</a>
+    <!-- Success/Error Messages -->
+    <div th:if="${param.uploadSuccess}" class="message message-success">
+        ✅ Fichier importé avec succès ! Votre travail a été enregistré.
+    </div>
 
-<br><br>
-<a href="/operator" class="back">⬅ Retour à la liste des postes</a>
+    <div th:if="${param.error == 'noFile'}" class="message message-error">
+        ❌ Erreur : Aucun fichier sélectionné. Veuillez choisir un fichier à importer.
+    </div>
 
-<h2>Importer un fichier rempli</h2>
-<form th:action="@{'/operator/post/' + ${post.postid} + '/upload'}" method="post" enctype="multipart/form-data">
-    <input type="file" name="file" accept=".xls,.xlsx" required>
-    <button type="submit">📤 Importer</button>
-</form>
+    <div th:if="${param.error == 'userNotFound'}" class="message message-error">
+        ❌ Erreur : Utilisateur non trouvé. Veuillez vous reconnecter.
+    </div>
 
+    <!-- Download Card -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7,10 12,15 17,10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Télécharger la Checklist
+            </h2>
+            <p class="card-description">Récupérez le fichier Excel à compléter pour ce poste</p>
+        </div>
+        <div class="card-content">
+            <a th:href="@{'/operator/download/' + ${post.templateid}}" class="button button-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7,10 12,15 17,10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Télécharger le fichier Excel
+            </a>
+        </div>
+    </div>
 
+    <!-- Upload Card -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17,8 12,3 7,8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                Importer le Fichier Complété
+            </h2>
+            <p class="card-description">Envoyez votre fichier Excel une fois rempli</p>
+        </div>
+        <div class="card-content">
+            <form class="upload-form" th:action="@{'/operator/post/' + ${post.postid} + '/upload'}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="file" class="label">Sélectionner votre fichier Excel complété</label>
+                    <input type="file" id="file" name="file" class="file-input" accept=".xls,.xlsx" required>
+                </div>
+                <button type="submit" class="button button-success">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17,8 12,3 7,8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    Importer le fichier
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Back Link -->
+    <a href="/operator/posts" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Retour à la liste des postes
+    </a>
+
+    <!-- Copyright -->
+    <div class="copyright">
+        <p>© 2024 - Tous droits réservés</p>
+    </div>
+</div>
+
+<script>
+    // Check for URL parameters and show appropriate messages
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Auto-hide success message after 5 seconds
+        const successMessage = document.querySelector('.message-success');
+        if (successMessage) {
+            setTimeout(() => {
+                successMessage.style.opacity = '0';
+                setTimeout(() => successMessage.remove(), 300);
+            }, 5000);
+        }
+
+        // Auto-hide error message after 8 seconds
+        const errorMessage = document.querySelector('.message-error');
+        if (errorMessage) {
+            setTimeout(() => {
+                errorMessage.style.opacity = '0';
+                setTimeout(() => errorMessage.remove(), 300);
+            }, 8000);
+        }
+    });
+
+    // Add file input validation and preview
+    const fileInput = document.getElementById('file');
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const fileName = file.name;
+                const fileSize = (file.size / 1024 / 1024).toFixed(2); // MB
+
+                // Validate file type
+                const validTypes = ['.xls', '.xlsx'];
+                const fileExtension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+
+                if (!validTypes.includes(fileExtension)) {
+                    alert('Veuillez sélectionner un fichier Excel (.xls ou .xlsx)');
+                    this.value = '';
+                    return;
+                }
+
+                // Validate file size (max 10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('Le fichier est trop volumineux. Taille maximum : 10MB');
+                    this.value = '';
+                    return;
+                }
+
+                console.log(`Fichier sélectionné: ${fileName} (${fileSize} MB)`);
+            }
+        });
+    }
+</script>
 </body>
 </html>

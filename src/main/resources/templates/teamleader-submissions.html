@@ -1,44 +1,776 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Soumissions opérateurs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soumissions Opérateurs - Espace Team Leader</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 50%, #faf5ff 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated blob background */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            mix-blend-mode: multiply;
+            animation: blob 7s infinite;
+        }
+
+        .blob-1 {
+            top: -10rem;
+            right: -10rem;
+            width: 20rem;
+            height: 20rem;
+            background: #a855f7;
+            opacity: 0.7;
+            animation-delay: 0s;
+        }
+
+        .blob-2 {
+            bottom: -10rem;
+            left: -10rem;
+            width: 20rem;
+            height: 20rem;
+            background: #3b82f6;
+            opacity: 0.7;
+            animation-delay: 2s;
+        }
+
+        .blob-3 {
+            top: 10rem;
+            left: 10rem;
+            width: 20rem;
+            height: 20rem;
+            background: #ec4899;
+            opacity: 0.7;
+            animation-delay: 4s;
+        }
+
+        @keyframes blob {
+            0% {
+                transform: translate(0px, 0px) scale(1);
+            }
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+            100% {
+                transform: translate(0px, 0px) scale(1);
+            }
+        }
+
+        /* Top navigation */
+        .top-nav {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 2rem;
+            max-width: 80rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-logo svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: white;
+        }
+
+        .nav-title {
+            font-weight: 700;
+            color: #111827;
+            font-size: 1.125rem;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            color: #6b7280;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .disconnect-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px 0 rgba(239, 68, 68, 0.3);
+        }
+
+        .disconnect-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px 0 rgba(239, 68, 68, 0.4);
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 80rem;
+            margin: 0 auto;
+        }
+
+        /* Header section */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 4rem;
+            height: 4rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo svg {
+            width: 2rem;
+            height: 2rem;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        /* Card */
+        .card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .card:hover {
+            box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.35);
+        }
+
+        .card-header {
+            padding: 1.5rem 1.5rem 0;
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .card-title svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: #3b82f6;
+        }
+
+        .card-description {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 0;
+        }
+
+        .card-content {
+            padding: 0.75rem 1.5rem 1.5rem;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6b7280;
+        }
+
+        .empty-state svg {
+            width: 4rem;
+            height: 4rem;
+            margin-bottom: 1rem;
+            color: #d1d5db;
+        }
+
+        .empty-state h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        /* Submissions table */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .submissions-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .submissions-table th {
+            background: rgba(59, 130, 246, 0.05);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+            border-bottom: 2px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .submissions-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.05);
+            font-size: 0.875rem;
+            color: #4b5563;
+            vertical-align: middle;
+        }
+
+        .submissions-table tr:hover {
+            background: rgba(59, 130, 246, 0.02);
+        }
+
+        .submissions-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Column widths */
+        .submissions-table th:nth-child(1),
+        .submissions-table td:nth-child(1) { width: 25%; } /* Poste */
+
+        .submissions-table th:nth-child(2),
+        .submissions-table td:nth-child(2) { width: 15%; } /* Matricule */
+
+        .submissions-table th:nth-child(3),
+        .submissions-table td:nth-child(3) { width: 20%; } /* Date */
+
+        .submissions-table th:nth-child(4),
+        .submissions-table td:nth-child(4) { width: 20%; text-align: center; } /* Télécharger */
+
+        .submissions-table th:nth-child(5),
+        .submissions-table td:nth-child(5) { width: 20%; text-align: center; } /* Importer */
+
+        /* Buttons */
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button-primary {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.3);
+        }
+
+        .button-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px 0 rgba(59, 130, 246, 0.4);
+        }
+
+        .button-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.3);
+        }
+
+        .button-success:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px 0 rgba(16, 185, 129, 0.4);
+        }
+
+        .button:active {
+            transform: scale(0.98);
+        }
+
+        .button svg {
+            width: 0.875rem;
+            height: 0.875rem;
+            transition: transform 0.2s ease;
+        }
+
+        .button:hover svg {
+            transform: translateX(2px);
+        }
+
+        /* Upload form */
+        .upload-form {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .file-input {
+            flex: 1;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            background: white;
+        }
+
+        .file-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+        }
+
+        /* Logout confirmation modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-header svg {
+            width: 2rem;
+            height: 2rem;
+            color: #ef4444;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .modal-content {
+            color: #6b7280;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .modal-btn-cancel {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #e5e7eb;
+        }
+
+        .modal-btn-confirm {
+            background: #ef4444;
+            color: white;
+        }
+
+        .modal-btn-confirm:hover {
+            background: #dc2626;
+        }
+
+        /* Copyright */
+        .copyright {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .top-nav {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .card-content {
+                padding: 0.75rem 1rem 1rem;
+            }
+
+            .submissions-table th,
+            .submissions-table td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .button {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.75rem;
+            }
+
+            .upload-form {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .file-input {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
+<!-- Animated background blobs -->
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
 
-<h1>Checklist envoyées par les opérateurs</h1>
+<!-- Top Navigation -->
+<div class="top-nav">
+    <div class="nav-left">
+        <div class="nav-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+        </div>
+        <span class="nav-title">Espace Team Leader</span>
+    </div>
+    <div class="nav-right">
+        <span class="user-info">Matricule: <span th:text="${session.matricule ?: '1234'}">1234</span></span>
+        <button class="disconnect-btn" onclick="showLogoutModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16,17 21,12 16,7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Déconnexion
+        </button>
+    </div>
+</div>
 
-<table border="1" cellpadding="10">
-    <tr>
-        <th>Poste</th>
-        <th>Matricule opérateur</th>
-        <th>Date de soumission</th>
-        <th>Télécharger</th>
-    </tr>
-    <tr th:each="entry : ${submissions}">
-        <td th:text="${entry.postName}">Post</td>
-        <td th:text="${entry.matricule}">Matricule</td>
-        <td th:text="${#strings.replace(entry.dateop.toString(), 'T', ' ')}"></td>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14,2 14,8 20,8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10,9 9,9 8,9"/>
+            </svg>
+        </div>
+        <h1>Soumissions des Opérateurs</h1>
+        <p>Consultez et gérez les checklists envoyées par les opérateurs</p>
+    </div>
 
+    <!-- Submissions Card -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                </svg>
+                Checklists Reçues
+            </h2>
+            <p class="card-description">Téléchargez les soumissions et importez vos corrections</p>
+        </div>
+        <div class="card-content">
+            <!-- Check if submissions exist -->
+            <div th:if="${#lists.isEmpty(submissions)}" class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                </svg>
+                <h3>Aucune soumission</h3>
+                <p>Les checklists envoyées par les opérateurs apparaîtront ici.</p>
+            </div>
 
-        <td><a th:href="@{'/teamleader/download/' + ${entry.setupId}}">📥 Télécharger</a></td>
-    </tr>
+            <!-- Submissions Table -->
+            <div th:unless="${#lists.isEmpty(submissions)}" class="table-wrapper">
+                <table class="submissions-table">
+                    <thead>
+                    <tr>
+                        <th>Poste</th>
+                        <th>Matricule</th>
+                        <th>Date de soumission</th>
+                        <th>Télécharger</th>
+                        <th>Importer correction</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="entry : ${submissions}">
+                        <td>
+                            <div style="font-weight: 600; color: #1f2937;" th:text="${entry.postName}">Nom du poste</div>
+                        </td>
+                        <td>
+                            <span style="font-family: monospace; background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 0.25rem;" th:text="${entry.matricule}">1234</span>
+                        </td>
+                        <td>
+                            <span th:text="${#temporals.format(entry.dateop, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</span>
+                        </td>
+                        <td>
+                            <a th:href="@{'/teamleader/download/' + ${entry.setupId}}" class="button button-primary">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7,10 12,15 17,10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                Télécharger
+                            </a>
+                        </td>
+                        <td>
+                            <form class="upload-form" th:action="@{'/teamleader/upload/' + ${entry.postId}}" method="post" enctype="multipart/form-data">
+                                <input type="file" name="file" class="file-input" accept=".xls,.xlsx" required>
+                                <button type="submit" class="button button-success">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17,8 12,3 7,8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                    Importer
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-</table>
-<table>
-<tr th:each="entry : ${submissions}">
-    <td th:text="${entry.postName}">Post</td>
-    <td th:text="${entry.matricule}">Matricule</td>
-    <td th:text="${#strings.replace(entry.dateop.toString(), 'T', ' ')}">Date</td>
-    <td><a th:href="@{'/teamleader/download/' + ${entry.setupId}}">📥 Télécharger</a></td>
+    <!-- Copyright -->
+    <div class="copyright">
+        <p>© 2024 - Tous droits réservés</p>
+    </div>
+</div>
 
-    <td>
-        <form th:action="@{'/teamleader/upload/' + ${entry.postId}}" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" required>
-            <button type="submit">📤 Importer</button>
-        </form>
-    </td>
-</tr>
-</table>
+<!-- Logout Confirmation Modal -->
+<div class="modal-overlay" id="logoutModal">
+    <div class="modal">
+        <div class="modal-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                <polyline points="16,17 21,12 16,7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            <h3 class="modal-title">Confirmer la déconnexion</h3>
+        </div>
+        <div class="modal-content">
+            Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à nouveau à votre espace team leader.
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn modal-btn-cancel" onclick="hideLogoutModal()">Annuler</button>
+            <button class="modal-btn modal-btn-confirm" onclick="confirmLogout()">Se déconnecter</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Logout modal functions
+    function showLogoutModal() {
+        document.getElementById('logoutModal').classList.add('show');
+    }
+
+    function hideLogoutModal() {
+        document.getElementById('logoutModal').classList.remove('show');
+    }
+
+    function confirmLogout() {
+        // Show loading state
+        const confirmBtn = document.querySelector('.modal-btn-confirm');
+        confirmBtn.textContent = 'Déconnexion...';
+        confirmBtn.disabled = true;
+
+        // Faire la requête de déconnexion puis rediriger manuellement
+        fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        }).then(() => {
+            // Rediriger vers la page de login après la déconnexion
+            window.location.href = '/login.html?logout=true';
+        }).catch(() => {
+            // En cas d'erreur, rediriger quand même
+            window.location.href = '/login.html?logout=true';
+        });
+    }
+
+    // Close modal on overlay click
+    document.getElementById('logoutModal').addEventListener('click', function (e) {
+        if (e.target === this) {
+            hideLogoutModal();
+        }
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            hideLogoutModal();
+        }
+    });
+
+    // File input validation
+    document.querySelectorAll('.file-input').forEach(input => {
+        input.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const fileName = file.name;
+                const fileExtension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+
+                // Validate file type
+                const validTypes = ['.xls', '.xlsx'];
+                if (!validTypes.includes(fileExtension)) {
+                    alert('Veuillez sélectionner un fichier Excel (.xls ou .xlsx)');
+                    this.value = '';
+                    return;
+                }
+
+                // Validate file size (max 10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('Le fichier est trop volumineux. Taille maximum : 10MB');
+                    this.value = '';
+                    return;
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>
