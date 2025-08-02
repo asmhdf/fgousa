@@ -475,18 +475,18 @@
             <p class="card-description">Remplacez le fichier template existant</p>
         </div>
         <div class="card-content">
-            <form class="upload-form" th:action="@{'/template/update/' + ${template.id}}" method="post" enctype="multipart/form-data">
+            <div class="upload-form" data-post-id="[[${template.id}]]">
                 <div class="form-group">
                     <label for="file" class="label">Sélectionner un nouveau fichier</label>
                     <input type="file" id="file" name="file" class="input" required>
                 </div>
-                <button type="submit" class="button button-success">
+                <button type="button" class="button button-success" id="uploadBtn">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
                     </svg>
                     Mettre à jour
                 </button>
-            </form>
+            </div>
         </div>
     </div>
 
@@ -500,7 +500,7 @@
 
     <!-- Copyright -->
     <div class="copyright">
-        <p>© 2024 - Tous droits réservés</p>
+        <p>© 2025 - Tous droits réservés</p>
     </div>
 </div>
 
@@ -532,10 +532,45 @@
             window.history.replaceState({}, document.title, window.location.pathname);
         }
     }
+    document.getElementById("uploadBtn").addEventListener("click", function () {
+        const fileInput = document.getElementById("file");
+        const file = fileInput.files[0];
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-        checkForSuccess();
+        // Get the template ID based on the label "Template ID"
+        const templateId = Array.from(document.querySelectorAll(".detail-item"))
+            .find(item => item.querySelector(".detail-label")?.textContent.trim() === "Template ID")
+            ?.querySelector(".detail-value")?.textContent.trim();
+
+        if (!templateId) {
+            alert("Template ID introuvable.");
+            return;
+        }
+
+        if (!file) {
+            alert("Veuillez sélectionner un fichier.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        fetch(`/template/update/${templateId}`, {
+            method: "POST",
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(err => { throw new Error(err); });
+                }
+                return response.text();
+            })
+            .then(data => {
+                alert("Fichier mis à jour avec succès !"); // e.g.,
+            })
+            .catch(error => {
+                console.error("Erreur :", error);
+                alert("Erreur lors de la mise à jour : " + error.message);
+            });
     });
 </script>
 </body>

@@ -56,11 +56,9 @@ public class TemplateController {
 
 
     @PostMapping("/update/{id}")
-    public String updateTemplate(@PathVariable Integer id, @RequestParam("file") MultipartFile file) throws IOException {
+    public void updateTemplate(@PathVariable Integer id, @RequestParam("file") MultipartFile file) throws IOException {
         Template template = templateRepository.findById(id).orElse(null);
-        if (template == null) {
-            return "redirect:/post";
-        }
+
         System.out.println("Fichier reçu : " + file.getOriginalFilename() + " (" + file.getSize() + " bytes)");
 
         // Store file content and filename
@@ -68,7 +66,7 @@ public class TemplateController {
         template.setFilename(file.getOriginalFilename());
         templateRepository.save(template);
 
-        return "redirect:/post/" + template.getId();
+
     }
     @GetMapping("/json/{id}")
     public ResponseEntity<List<List<List<String>>>> getExcelAsJson(@PathVariable Integer id) {
