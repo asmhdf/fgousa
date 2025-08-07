@@ -79,7 +79,7 @@
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 64rem; /* Augmenté pour le tableau */
+            max-width: 64rem;
             margin: 0 auto;
         }
 
@@ -200,6 +200,130 @@
             font-size: 0.875rem;
         }
 
+        /* Filter section */
+        .filter-section {
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 2px dashed rgba(59, 130, 246, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .filter-grid {
+            display: flex;
+            align-items: end;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            text-align: center;
+        }
+
+        .filter-input {
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            background: white;
+            min-width: 150px;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .filter-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .filter-button-primary {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.3);
+        }
+
+        .filter-button-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px 0 rgba(59, 130, 246, 0.4);
+        }
+
+        .filter-button-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .filter-button-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .filter-button svg {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        /* Filter results info */
+        .filter-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+
+        .filter-info.hidden {
+            display: none;
+        }
+
+        .results-count {
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .selected-date {
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .clear-filter {
+            color: #6b7280;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .clear-filter:hover {
+            color: #374151;
+        }
+
         /* Archive table */
         .table-wrapper {
             overflow-x: auto;
@@ -210,7 +334,7 @@
         .archive-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 700px; /* Largeur minimum pour éviter l'écrasement */
+            min-width: 700px;
         }
 
         .archive-table th {
@@ -240,27 +364,25 @@
             border-bottom: none;
         }
 
-        /* Colonnes avec largeurs spécifiques */
+        .archive-table tr.hidden {
+            display: none;
+        }
+
+        /* Column widths */
         .archive-table th:nth-child(1),
-        .archive-table td:nth-child(1) { width: 18%; } /* Date Opérateur */
-
+        .archive-table td:nth-child(1) { width: 18%; }
         .archive-table th:nth-child(2),
-        .archive-table td:nth-child(2) { width: 18%; } /* Date TeamLeader */
-
+        .archive-table td:nth-child(2) { width: 18%; }
         .archive-table th:nth-child(3),
-        .archive-table td:nth-child(3) { width: 18%; } /* Date Qualité */
-
+        .archive-table td:nth-child(3) { width: 18%; }
         .archive-table th:nth-child(4),
-        .archive-table td:nth-child(4) { width: 12%; } /* ID Opérateur */
-
+        .archive-table td:nth-child(4) { width: 12%; }
         .archive-table th:nth-child(5),
-        .archive-table td:nth-child(5) { width: 12%; } /* ID TeamLeader */
-
+        .archive-table td:nth-child(5) { width: 12%; }
         .archive-table th:nth-child(6),
-        .archive-table td:nth-child(6) { width: 12%; } /* ID Qualité */
-
+        .archive-table td:nth-child(6) { width: 12%; }
         .archive-table th:nth-child(7),
-        .archive-table td:nth-child(7) { width: 10%; text-align: center; } /* Actions */
+        .archive-table td:nth-child(7) { width: 10%; text-align: center; }
 
         /* Buttons */
         .button {
@@ -394,6 +516,16 @@
                 gap: 0.5rem;
             }
 
+            .filter-grid {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .filter-input {
+                min-width: 200px;
+            }
+
             .archive-table {
                 min-width: 600px;
                 font-size: 0.75rem;
@@ -472,7 +604,7 @@
                 </div>
                 <div class="detail-item">
                     <span class="detail-label">Nombre d'archives</span>
-                    <span class="detail-value" th:text="${#lists.size(archives)}">0</span>
+                    <span class="detail-value" id="total-archives" th:text="${#lists.size(archives)}">0</span>
                 </div>
             </div>
         </div>
@@ -491,6 +623,32 @@
             <p class="card-description">Consultez et téléchargez les archives de setup</p>
         </div>
         <div class="card-content">
+            <!-- Date Filter Section -->
+            <div th:unless="${#lists.isEmpty(archives)}" class="filter-section">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label for="selectedDate" class="filter-label">📅 Filtrer par date</label>
+                        <input type="date" id="selectedDate" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <button type="button" id="clearFilter" class="filter-button filter-button-secondary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18"/>
+                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                            </svg>
+                            Afficher tout
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Results Info -->
+            <div id="filterInfo" class="filter-info hidden">
+                <span>Archives du <span class="selected-date" id="selectedDateDisplay"></span> : <span class="results-count" id="filteredCount">0</span> résultat(s)</span>
+                <a href="#" id="clearFilterLink" class="clear-filter">Afficher toutes les archives</a>
+            </div>
+
             <!-- Empty State -->
             <div th:if="${#lists.isEmpty(archives)}" class="empty-state">
                 <div class="empty-icon">📭</div>
@@ -500,7 +658,7 @@
 
             <!-- Archives Table -->
             <div th:unless="${#lists.isEmpty(archives)}" class="table-wrapper">
-                <table class="archive-table">
+                <table class="archive-table" id="archiveTable">
                     <thead>
                     <tr>
                         <th>Date Opérateur</th>
@@ -513,10 +671,10 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="entry : ${archives}">
-                        <td th:text="${entry.dateop != null ? #temporals.format(entry.dateop, 'dd/MM/yyyy HH:mm') : '-'}">-</td>
-                        <td th:text="${entry.datetl != null ? #temporals.format(entry.datetl, 'dd/MM/yyyy HH:mm') : '-'}">-</td>
-                        <td th:text="${entry.dateq != null ? #temporals.format(entry.dateq, 'dd/MM/yyyy HH:mm') : '-'}">-</td>
+                    <tr th:each="entry : ${archives}" class="archive-row">
+                        <td class="date-op" th:text="${entry.dateop != null ? #temporals.format(entry.dateop, 'dd/MM/yyyy HH:mm') : '-'}" th:data-date="${entry.dateop}">-</td>
+                        <td class="date-tl" th:text="${entry.datetl != null ? #temporals.format(entry.datetl, 'dd/MM/yyyy HH:mm') : '-'}" th:data-date="${entry.datetl}">-</td>
+                        <td class="date-q" th:text="${entry.dateq != null ? #temporals.format(entry.dateq, 'dd/MM/yyyy HH:mm') : '-'}" th:data-date="${entry.dateq}">-</td>
                         <td th:text="${entry.idop ?: '-'}">-</td>
                         <td th:text="${entry.idtl ?: '-'}">-</td>
                         <td th:text="${entry.idq ?: '-'}">-</td>
@@ -550,5 +708,104 @@
         <p>© 2025 - Tous droits réservés</p>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectedDateInput = document.getElementById('selectedDate');
+        const clearFilterBtn = document.getElementById('clearFilter');
+        const clearFilterLink = document.getElementById('clearFilterLink');
+        const filterInfo = document.getElementById('filterInfo');
+        const filteredCountSpan = document.getElementById('filteredCount');
+        const selectedDateDisplay = document.getElementById('selectedDateDisplay');
+        const totalArchivesSpan = document.getElementById('total-archives');
+        const archiveRows = document.querySelectorAll('.archive-row');
+
+        const totalCount = archiveRows.length;
+
+        // Parse date from DD/MM/YYYY HH:mm format to YYYY-MM-DD for comparison
+        function parseDate(dateStr) {
+            if (!dateStr || dateStr === '-') return null;
+            const [datePart] = dateStr.split(' ');
+            const [day, month, year] = datePart.split('/');
+            return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        }
+
+        // Format date for display (DD/MM/YYYY)
+        function formatDateForDisplay(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('fr-FR');
+        }
+
+        // Check if any date in the row matches the selected date
+        function rowMatchesDate(row, selectedDate) {
+            const dateOp = row.querySelector('.date-op').textContent;
+            const dateTl = row.querySelector('.date-tl').textContent;
+            const dateQ = row.querySelector('.date-q').textContent;
+
+            const dates = [dateOp, dateTl, dateQ]
+                .map(parseDate)
+                .filter(date => date !== null);
+
+            return dates.includes(selectedDate);
+        }
+
+        // Apply date filter
+        function applyDateFilter() {
+            const selectedDate = selectedDateInput.value;
+
+            if (!selectedDate) {
+                clearDateFilter();
+                return;
+            }
+
+            let visibleCount = 0;
+
+            archiveRows.forEach(row => {
+                if (rowMatchesDate(row, selectedDate)) {
+                    row.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    row.classList.add('hidden');
+                }
+            });
+
+            // Update filter info
+            filteredCountSpan.textContent = visibleCount;
+            selectedDateDisplay.textContent = formatDateForDisplay(selectedDate);
+            filterInfo.classList.remove('hidden');
+
+            // Update total archives count
+            totalArchivesSpan.textContent = visibleCount;
+        }
+
+        // Clear filter
+        function clearDateFilter() {
+            selectedDateInput.value = '';
+
+            archiveRows.forEach(row => {
+                row.classList.remove('hidden');
+            });
+
+            filterInfo.classList.add('hidden');
+            totalArchivesSpan.textContent = totalCount;
+        }
+
+        // Event listeners
+        if (selectedDateInput) {
+            selectedDateInput.addEventListener('change', applyDateFilter);
+        }
+
+        if (clearFilterBtn) {
+            clearFilterBtn.addEventListener('click', clearDateFilter);
+        }
+
+        if (clearFilterLink) {
+            clearFilterLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                clearDateFilter();
+            });
+        }
+    });
+</script>
 </body>
 </html>
