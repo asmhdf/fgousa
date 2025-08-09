@@ -7,6 +7,8 @@ import com.example.pleasework.repository.PostRepository;
 import com.example.pleasework.repository.SetupRepository;
 import com.example.pleasework.repository.UserRepository;
 import com.example.pleasework.service.ExcelService;
+import com.example.pleasework.service.LibreOfficeConvertService;
+
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +32,8 @@ public class QualityController {
     private final UserRepository userRepository;
     private final ExcelService excelService;
 
+    @Autowired
+    private LibreOfficeConvertService libreOfficeConvertService;
     @Autowired
     public QualityController(SetupRepository setupRepository,
                              PostRepository postRepository,
@@ -77,29 +81,36 @@ public class QualityController {
                 .body(lockedFile);
     }
 
-    @PostMapping("/upload")
+    @PostMapping("/upload") // <— PAS /qualite/upload si le controller a déjà @RequestMapping("/qualite")
     public String uploadQualityFile(@RequestParam("postId") Integer postId,
                                     @RequestParam("file") MultipartFile file,
-                                    HttpSession session) throws IOException {
+                                    HttpSession session) throws Exception {
 
-        if (file == null || file.isEmpty()) {
-            return "redirect:/qualite?error=noFile";
+        if (file == null || file.isEmpty()) return "redirect:/qualite?error=noFile";
+
+        Integer idq = (Integer) session.getAttribute("userid");
+        if (idq == null) return "redirect:/login?error=sessionExpired";
+
+        // 1) Effacer (mettre à NULL) les 2 derniers fichiers OP/TL pour ce post
+        List<Setup> toClear = setupRepository
+                .findTop2ByPostidAndFileIsNotNullAndIdqIsNullOrderBySetupidDesc(postId);
+        for (Setup s : toClear) {
+            s.setFile(null);
         }
+        setupRepository.saveAll(toClear);  // flush dans la même transaction
 
-        Integer idq = (Integer) session.getAttribute("userid"); // tu dois stocker ça à la connexion
-        if (idq == null) {
-            return "redirect:/login?error=sessionExpired";
-        }
+        // 2) Convertir Excel -> PDF (via LibreOffice)
+        byte[] pdfBytes = libreOfficeConvertService
+                .excelToPdf(file.getBytes(), file.getOriginalFilename());
 
-        Setup setup = new Setup();
-        setup.setPostid(postId);
-        setup.setFile(file.getBytes());
-        setup.setDateq(LocalDateTime.now());
-        setup.setIdq(idq);
-
-        setupRepository.save(setup);
+        // 3) Sauver la ligne Qualité (PDF dans file)
+        Setup s = new Setup();
+        s.setPostid(postId);
+        s.setIdq(idq);
+        s.setDateq(LocalDateTime.now());
+        s.setFile(pdfBytes);
+        setupRepository.save(s);
 
         return "redirect:/qualite?success";
     }
-
 }

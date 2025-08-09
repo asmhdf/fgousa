@@ -71,16 +71,21 @@ public class PostController {
     private ExcelService excelService;
 
     @GetMapping("/post/archive/download/{setupId}")
-    public ResponseEntity<byte[]> downloadArchive(@PathVariable Integer setupId) throws IOException {
-        Setup setup = setupRepository.findById(setupId).orElseThrow();
-        byte[] fileData = excelService.lockNewlyFilledCells(setup.getFile());
+    public ResponseEntity<byte[]> downloadArchive(@PathVariable Integer setupId) {
+        Setup s = setupRepository.findById(setupId).orElseThrow();
 
+        // On ne sert que les enregistrements Qualité (PDF)
+        if (s.getIdq() == null || s.getFile() == null) {
+            return ResponseEntity.notFound().build();
+        }
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"archive.xls\"")
-                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-                .body(fileData);
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"archive.pdf\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(s.getFile());
     }
+
+
 
 
 }

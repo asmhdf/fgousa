@@ -4,62 +4,86 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jodconverter.core.DocumentConverter;
+import org.jodconverter.local.LocalConverter;
+import org.jodconverter.local.office.LocalOfficeManager;
 import org.springframework.stereotype.Service;
 
+import org.springframework.stereotype.Service;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class ExcelService {
 
     public byte[] lockNewlyFilledCells(byte[] excelBytes) throws IOException {
-        InputStream is = new ByteArrayInputStream(excelBytes);
-        Workbook workbook;
+        if (excelBytes == null || excelBytes.length == 0) return excelBytes;
 
-        if (isXLS(excelBytes)) {
-            workbook = new HSSFWorkbook(new POIFSFileSystem(is));
-        } else {
-            workbook = new XSSFWorkbook(is);
-        }
+        try (InputStream is = new ByteArrayInputStream(excelBytes);
+             Workbook workbook = isXLS(excelBytes)
+                     ? new HSSFWorkbook(new POIFSFileSystem(is))
+                     : new XSSFWorkbook(is)) {
 
-        Map<CellStyle, CellStyle> lockedStyleCache = new HashMap<>();
+            // Cache: pour chaque style d’origine (index), on garde 2 clones (unlocked/locked)
+            Map<Short, CellStyle[]> styleCache = new HashMap<>();
 
-        for (Sheet sheet : workbook) {
-            for (Row row : sheet) {
-                for (Cell cell : row) {
-                    if (cell == null) continue;
+            for (Sheet sheet : workbook) {
+                for (Row row : sheet) {
+                    if (row == null) continue;
 
-                    boolean isEmpty = cell.getCellType() == CellType.BLANK
-                            || (cell.getCellType() == CellType.STRING && cell.getStringCellValue().trim().isEmpty());
+                    short lastCell = row.getLastCellNum();
+                    if (lastCell < 0) continue; // ligne vide sans cellules connues
 
-                    // Vérifie si la cellule est déjà lockée
-                    if (!isEmpty && !cell.getCellStyle().getLocked()) {
-                        // 🔐 Elle est remplie et pas encore lockée : on la modifie
+                    for (int c = 0; c < lastCell; c++) {
+                        // Crée les vides pour pouvoir leur appliquer "Unlocked"
+                        Cell cell = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
 
+                        // Style d’origine (peut être le style par défaut index=0)
                         CellStyle original = cell.getCellStyle();
-                        CellStyle lockedStyle = lockedStyleCache.get(original);
+                        short key = original == null ? 0 : original.getIndex();
 
-                        if (lockedStyle == null) {
-                            lockedStyle = workbook.createCellStyle();
-                            lockedStyle.cloneStyleFrom(original);
-                            lockedStyle.setLocked(true);
-                            lockedStyleCache.put(original, lockedStyle);
+                        // Récupère/Crée le duo (unlocked, locked) pour CE style d’origine
+                        CellStyle[] pair = styleCache.get(key);
+                        if (pair == null) {
+                            CellStyle unlocked = workbook.createCellStyle();
+                            CellStyle locked = workbook.createCellStyle();
+                            if (original != null) {
+                                unlocked.cloneStyleFrom(original);
+                                locked.cloneStyleFrom(original);
+                            }
+                            unlocked.setLocked(false);
+                            locked.setLocked(true);
+                            pair = new CellStyle[]{unlocked, locked};
+                            styleCache.put(key, pair);
                         }
 
-                        cell.setCellStyle(lockedStyle);
+                        // Applique locked si non vide, sinon unlocked
+                        cell.setCellStyle(isEmpty(cell) ? pair[0] : pair[1]);
                     }
-                    // ❌ NE PAS modifier les autres styles (vides ou déjà lockées)
                 }
+
+                // Active la protection : seules les cellules "Locked" seront modifiées
+                sheet.protectSheet("readonly");
             }
 
-            sheet.protectSheet("readonly");
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            workbook.write(os);
+            return os.toByteArray();
         }
-
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        workbook.write(os);
-        workbook.close();
-        return os.toByteArray();
     }
 
     private boolean isXLS(byte[] data) {
@@ -70,10 +94,30 @@ public class ExcelService {
                 && data[3] == (byte) 0xE0;
     }
 
-    private boolean isNotEmpty(Cell cell) {
-        if (cell == null) return false;
-        if (cell.getCellType() == CellType.BLANK) return false;
-        if (cell.getCellType() == CellType.STRING && cell.getStringCellValue().trim().isEmpty()) return false;
-        return true;
+    private boolean isEmpty(Cell cell) {
+        if (cell == null) return true;
+        CellType type = cell.getCellType();
+        switch (type) {
+            case BLANK:
+                return true;
+            case STRING:
+                String s = cell.getStringCellValue();
+                return s == null || s.trim().isEmpty();
+            case FORMULA:
+                CellType cached = cell.getCachedFormulaResultType();
+                if (cached == CellType.STRING) {
+                    String fs = cell.getStringCellValue();
+                    return fs == null || fs.trim().isEmpty();
+                }
+                // On considère toute autre formule comme non vide
+                return false;
+            case NUMERIC:
+            case BOOLEAN:
+            case ERROR:
+                return false;
+            default:
+                return false;
+        }
     }
+
 }

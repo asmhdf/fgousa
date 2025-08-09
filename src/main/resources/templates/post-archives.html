@@ -560,13 +560,11 @@
     </style>
 </head>
 <body>
-<!-- Animated background blobs -->
 <div class="blob blob-1"></div>
 <div class="blob blob-2"></div>
 <div class="blob blob-3"></div>
 
 <div class="container">
-    <!-- Header -->
     <div class="header">
         <div class="logo">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -581,7 +579,6 @@
         <p th:text="'Historique complet pour le poste : ' + ${post.nom}">Historique complet pour le poste</p>
     </div>
 
-    <!-- Post Info Card -->
     <div class="card">
         <div class="card-header">
             <h2 class="card-title">
@@ -610,7 +607,6 @@
         </div>
     </div>
 
-    <!-- Archives Card -->
     <div class="card">
         <div class="card-header">
             <h2 class="card-title">
@@ -623,7 +619,6 @@
             <p class="card-description">Consultez et téléchargez les archives de setup</p>
         </div>
         <div class="card-content">
-            <!-- Date Filter Section -->
             <div th:unless="${#lists.isEmpty(archives)}" class="filter-section">
                 <div class="filter-grid">
                     <div class="filter-group">
@@ -643,20 +638,17 @@
                 </div>
             </div>
 
-            <!-- Filter Results Info -->
             <div id="filterInfo" class="filter-info hidden">
                 <span>Archives du <span class="selected-date" id="selectedDateDisplay"></span> : <span class="results-count" id="filteredCount">0</span> résultat(s)</span>
                 <a href="#" id="clearFilterLink" class="clear-filter">Afficher toutes les archives</a>
             </div>
 
-            <!-- Empty State -->
             <div th:if="${#lists.isEmpty(archives)}" class="empty-state">
                 <div class="empty-icon">📭</div>
                 <h3>Aucune archive disponible</h3>
                 <p>Il n'y a pas encore d'archives pour ce poste.</p>
             </div>
 
-            <!-- Archives Table -->
             <div th:unless="${#lists.isEmpty(archives)}" class="table-wrapper">
                 <table class="archive-table" id="archiveTable">
                     <thead>
@@ -679,7 +671,7 @@
                         <td th:text="${entry.idtl ?: '-'}">-</td>
                         <td th:text="${entry.idq ?: '-'}">-</td>
                         <td>
-                            <a th:href="@{'/post/archive/download/' + ${entry.setupid}}" class="button button-primary">
+                            <a th:if="${entry.idq != null}" th:href="@{'/post/archive/download/' + ${entry.setupid}}" class="button button-primary">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                     <polyline points="7,10 12,15 17,10"/>
@@ -687,6 +679,7 @@
                                 </svg>
                                 Télécharger
                             </a>
+                            <span th:unless="${entry.idq != null}">-</span>
                         </td>
                     </tr>
                     </tbody>
@@ -695,7 +688,6 @@
         </div>
     </div>
 
-    <!-- Back Link -->
     <a href="/post" class="back-link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
@@ -703,7 +695,6 @@
         Retour à la liste
     </a>
 
-    <!-- Copyright -->
     <div class="copyright">
         <p>© 2025 - Tous droits réservés</p>
     </div>
